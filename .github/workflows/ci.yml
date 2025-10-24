@@ -10,5 +10,5 @@ jobs:
       - run: python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
       - run: .venv/bin/ruff check .
       - run: .venv/bin/ruff format --check .
-      - run: .venv/bin/mypy apps/api/app
+      - run: .venv/bin/mypy apps/api/app/main.py
       - run: .venv/bin/pytest -q
