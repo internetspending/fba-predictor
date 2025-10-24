@@ -1,0 +1,57 @@
+services:
+  api:
+    build:
+      context: ../../
+      dockerfile: deploy/docker/api.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://fba_user:fba_pass@db:5432/fba_predictor
+      - REDIS_URL=redis://redis:6379/0
+      - KEEPA_API_KEY=${KEEPA_API_KEY:-your_keepa_api_key_here}
+      - APP_ENV=development
+      - DEBUG=true
+      - LOG_LEVEL=info
+      - API_TITLE=FBA Profit Predictor
+      - API_VERSION=0.1.0
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:8080
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ../../apps:/app/apps
+    command: uvicorn apps.api.app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=fba_predictor
+      - POSTGRES_USER=fba_user
+      - POSTGRES_PASSWORD=fba_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fba_user -d fba_predictor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
