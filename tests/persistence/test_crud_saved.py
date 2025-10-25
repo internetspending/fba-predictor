@@ -46,8 +46,8 @@ async def test_get_saved_product(db_session: AsyncSession, test_user, test_produ
 @pytest.mark.asyncio
 async def test_get_user_saved_products(db_session: AsyncSession, test_user, test_product):
     """Test getting saved products for a user."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     # Create multiple saved products
     saved1 = await create_saved_product(
@@ -72,8 +72,8 @@ async def test_get_user_saved_products(db_session: AsyncSession, test_user, test
 @pytest.mark.asyncio
 async def test_delete_saved_product(db_session: AsyncSession, test_user, test_product):
     """Test deleting a saved product."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     saved = await create_saved_product(
         db_session, user_id=user.id, product_id=product.id, notes="Test saved product"

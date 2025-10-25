@@ -16,8 +16,8 @@ from apps.api.app.persistence.crud import (
 async def test_create_scan_history(db_session: AsyncSession, test_user, test_product):
     """Test creating a new scan history entry."""
     # Await the fixtures to get the actual objects
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     scan_data = {"price": 29.99, "rank": 1000, "reviews": 50, "rating": 4.5}
 
@@ -35,8 +35,8 @@ async def test_create_scan_history(db_session: AsyncSession, test_user, test_pro
 @pytest.mark.asyncio
 async def test_get_scan_history(db_session: AsyncSession, test_user, test_product):
     """Test getting a scan history entry by ID."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     scan_data = {"price": 29.99, "rank": 1000}
     scan = await create_scan_history(
@@ -51,8 +51,8 @@ async def test_get_scan_history(db_session: AsyncSession, test_user, test_produc
 @pytest.mark.asyncio
 async def test_get_user_scan_history(db_session: AsyncSession, test_user, test_product):
     """Test getting scan history for a user."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     # Create multiple scans
     scan1 = await create_scan_history(
@@ -72,8 +72,8 @@ async def test_get_user_scan_history(db_session: AsyncSession, test_user, test_p
 @pytest.mark.asyncio
 async def test_get_product_scan_history(db_session: AsyncSession, test_user, test_product):
     """Test getting scan history for a product."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     # Create multiple scans
     scan1 = await create_scan_history(
@@ -93,8 +93,8 @@ async def test_get_product_scan_history(db_session: AsyncSession, test_user, tes
 @pytest.mark.asyncio
 async def test_delete_scan_history(db_session: AsyncSession, test_user, test_product):
     """Test deleting a scan history entry."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     scan = await create_scan_history(
         db_session, user_id=user.id, product_id=product.id, results={"price": 29.99}

@@ -1,12 +1,16 @@
 """Pytest configuration and fixtures for testing."""
 
 from collections.abc import AsyncGenerator
+from typing import TYPE_CHECKING
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from apps.api.app.persistence.tables import Base
+
+if TYPE_CHECKING:
+    from apps.api.app.persistence.tables import User, Product
 
 # Test database URL (in-memory SQLite)
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -36,7 +40,7 @@ async def db_session(db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 
 
 @pytest.fixture
-async def test_user(db_session: AsyncSession):
+async def test_user(db_session: AsyncSession) -> "User":
     """Create a test user."""
     from apps.api.app.persistence.crud import create_user
 
@@ -44,7 +48,7 @@ async def test_user(db_session: AsyncSession):
 
 
 @pytest.fixture
-async def test_product(db_session: AsyncSession):
+async def test_product(db_session: AsyncSession) -> "Product":
     """Create a test product."""
     from apps.api.app.persistence.crud import create_product
 
