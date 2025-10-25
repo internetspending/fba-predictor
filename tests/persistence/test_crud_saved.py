@@ -14,8 +14,8 @@ from apps.api.app.persistence.crud import (
 @pytest.mark.asyncio
 async def test_create_saved_product(db_session: AsyncSession, test_user, test_product):
     """Test creating a new saved product entry."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     saved = await create_saved_product(
         db_session, user_id=user.id, product_id=product.id, notes="My favorite product"
@@ -30,8 +30,8 @@ async def test_create_saved_product(db_session: AsyncSession, test_user, test_pr
 @pytest.mark.asyncio
 async def test_get_saved_product(db_session: AsyncSession, test_user, test_product):
     """Test getting a saved product by ID."""
-    user = await test_user
-    product = await test_product
+    user = test_user
+    product = test_product
 
     saved = await create_saved_product(
         db_session, user_id=user.id, product_id=product.id, notes="Test saved product"
@@ -55,7 +55,7 @@ async def test_get_user_saved_products(db_session: AsyncSession, test_user, test
     )
 
     # Create another product for the second saved item
-    from apps.api.app.persistence.crud import create_product
+    from apps.api.app.persistence.crud import create_product  # noqa: PLC0415
 
     product2 = await create_product(db_session, asin="B08N5WRWNW2", title="Test Product 2")
 

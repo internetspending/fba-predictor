@@ -15,7 +15,8 @@ from apps.api.app.persistence.crud import (
 @pytest.mark.asyncio
 async def test_create_user(db_session: AsyncSession):
     """Test creating a new user."""
-    user = await create_user(db_session, "test@example.com")
+    session = await db_session
+    user = await create_user(session, "test@example.com")
     assert user.email == "test@example.com"
     assert user.is_active is True
     assert user.id is not None

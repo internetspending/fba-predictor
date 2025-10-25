@@ -10,7 +10,9 @@ from sqlalchemy.orm import sessionmaker
 from apps.api.app.persistence.tables import Base
 
 if TYPE_CHECKING:
-    from apps.api.app.persistence.tables import User, Product
+    from fastapi.testclient import TestClient
+
+    from apps.api.app.persistence.tables import Product, User
 
 # Test database URL (in-memory SQLite)
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -42,7 +44,7 @@ async def db_session(db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 @pytest.fixture
 async def test_user(db_session: AsyncSession) -> "User":
     """Create a test user."""
-    from apps.api.app.persistence.crud import create_user
+    from apps.api.app.persistence.crud import create_user  # noqa: PLC0415
 
     return await create_user(db_session, "test@example.com")
 
@@ -50,7 +52,7 @@ async def test_user(db_session: AsyncSession) -> "User":
 @pytest.fixture
 async def test_product(db_session: AsyncSession) -> "Product":
     """Create a test product."""
-    from apps.api.app.persistence.crud import create_product
+    from apps.api.app.persistence.crud import create_product  # noqa: PLC0415
 
     return await create_product(
         db_session,
@@ -59,3 +61,13 @@ async def test_product(db_session: AsyncSession) -> "Product":
         category="Electronics",
         brand="TestBrand",
     )
+
+
+@pytest.fixture
+def client() -> "TestClient":
+    """Create a test client for the FastAPI application."""
+    from fastapi.testclient import TestClient  # noqa: PLC0415
+
+    from apps.api.app.main import app  # noqa: PLC0415
+
+    return TestClient(app)
