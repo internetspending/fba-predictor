@@ -4,14 +4,15 @@ from collections.abc import AsyncGenerator
 from typing import TYPE_CHECKING
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
+from apps.api.app.main import app
+from apps.api.app.persistence.crud import create_product, create_user
 from apps.api.app.persistence.tables import Base
 
 if TYPE_CHECKING:
-    from fastapi.testclient import TestClient
-
     from apps.api.app.persistence.tables import Product, User
 
 # Test database URL (in-memory SQLite)
@@ -44,16 +45,12 @@ async def db_session(db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 @pytest.fixture
 async def test_user(db_session: AsyncSession) -> "User":
     """Create a test user."""
-    from apps.api.app.persistence.crud import create_user
-
     return await create_user(db_session, "test@example.com")
 
 
 @pytest.fixture
 async def test_product(db_session: AsyncSession) -> "Product":
     """Create a test product."""
-    from apps.api.app.persistence.crud import create_product
-
     return await create_product(
         db_session,
         asin="B08N5WRWNW",
@@ -66,8 +63,4 @@ async def test_product(db_session: AsyncSession) -> "Product":
 @pytest.fixture
 def client() -> "TestClient":
     """Create a test client for the FastAPI application."""
-    from fastapi.testclient import TestClient
-
-    from apps.api.app.main import app
-
     return TestClient(app)

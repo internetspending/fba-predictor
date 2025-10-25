@@ -4,6 +4,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.api.app.persistence.crud import (
+    create_product,
     create_saved_product,
     delete_saved_product,
     get_saved_product,
@@ -55,8 +56,6 @@ async def test_get_user_saved_products(db_session: AsyncSession, test_user, test
     )
 
     # Create another product for the second saved item
-    from apps.api.app.persistence.crud import create_product
-
     product2 = await create_product(db_session, asin="B08N5WRWNW2", title="Test Product 2")
 
     saved2 = await create_saved_product(
