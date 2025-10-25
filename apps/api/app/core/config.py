@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     debug: bool = Field(default=True, description="Debug mode")
     log_level: str = Field(default="INFO", description="Logging level")
 
+    # External API Keys
+    keepa_api_key: str = Field(default="your_keepa_api_key_here", description="Keepa API key")
+
+    # API Configuration
+    api_title: str = Field(default="FBA Profit Predictor", description="API title")
+    api_version: str = Field(default="0.1.0", description="API version")
+
     @property
     def cors_origins_list(self) -> list[str]:
         """Parse CORS origins into a list."""
