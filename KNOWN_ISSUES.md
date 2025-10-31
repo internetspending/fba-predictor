@@ -6,7 +6,7 @@ This document tracks known issues that don't block current milestones but should
 
 **Status**: Known Issue - Non-blocking
 **Milestone**: M2 (Post-M2 cleanup)
-**GitHub Issue**: (see below)
+**GitHub Issue**: [#38](https://github.com/internetspending/fba-predictor/issues/38)
 
 ### Description
 
