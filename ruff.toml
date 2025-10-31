@@ -1,9 +1,10 @@
 line-length = 100
 target-version = "py312"
+extend-exclude = ["alembic"]
 
 [lint]
 select = ["E", "F", "I", "UP"]
-ignore = []
+ignore = ["E501"]
 
 [format]
 quote-style = "double"

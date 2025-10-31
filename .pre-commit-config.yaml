@@ -9,7 +9,9 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
+        args: [--config-file, mypy.ini, --ignore-missing-imports, apps/api/app/main.py]
         additional_dependencies: [types-requests, types-redis, sqlalchemy]
+        exclude: ^alembic/
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

@@ -4,6 +4,7 @@ line-length = 100
 extend-exclude = ["alembic"]
 lint.select = ["E","F","I","UP","B","SIM","ARG","PL","RUF"]
 lint.ignore = ["E501"]
+# Ruff will prefer ruff.toml if it exists, but keeping pyproject.toml for backwards compat
 format.quote-style = "double"
 format.indent-style = "space"
 
