@@ -12,6 +12,9 @@ type:	## Type-check with mypy
 test:	## Run tests
 	pytest -q
 
+test.m2:	## Run M2 milestone tests
+	pytest -m "m2" -q
+
 cov:	## Coverage report
 	pytest --cov=apps/api/app --cov-report=term-missing
 
