@@ -19,27 +19,41 @@ if TYPE_CHECKING:
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
 
-@pytest.fixture(scope="session")
-async def db_engine() -> AsyncEngine:
+# Store engine at module level for test session
+_test_engine: AsyncEngine | None = None
+
+
+@pytest.fixture(scope="function")
+def db_engine() -> AsyncEngine:
     """Create async database engine for testing."""
-    engine = create_async_engine(TEST_DATABASE_URL, echo=False)
+    global _test_engine
+    if _test_engine is None:
+        _test_engine = create_async_engine(TEST_DATABASE_URL, echo=False)
+        # Create tables synchronously via run_async
+        import asyncio
 
-    # Create all tables
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        async def create_tables():
+            async with _test_engine.begin() as conn:
+                await conn.run_sync(Base.metadata.create_all)
 
-    yield engine
-    await engine.dispose()
+        asyncio.run(create_tables())
+
+    yield _test_engine
+    # Cleanup handled at end of test session
 
 
 @pytest.fixture
-async def db_session(db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, None]:
-    """Create async database session for testing."""
+def db_session_factory(db_engine: AsyncEngine):
+    """Return a factory function to create database sessions."""
     async_session = sessionmaker(db_engine, class_=AsyncSession, expire_on_commit=False)
 
-    async with async_session() as session:
-        yield session
-        await session.rollback()
+    async def _get_session() -> AsyncGenerator[AsyncSession, None]:
+        async with async_session() as session:
+            async with session.begin():
+                yield session
+                await session.rollback()
+
+    return _get_session
 
 
 @pytest.fixture
@@ -64,3 +78,13 @@ async def test_product(db_session: AsyncSession) -> "Product":
 def client() -> "TestClient":
     """Create a test client for the FastAPI application."""
     return TestClient(app)
+
+
+@pytest.fixture
+async def async_client() -> AsyncGenerator:
+    """Create an async test client for the FastAPI application."""
+
+    from httpx import AsyncClient
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac

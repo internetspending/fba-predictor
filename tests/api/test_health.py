@@ -14,7 +14,9 @@ def test_health_endpoint(client: TestClient) -> None:
     response = client.get("/v1/health")
 
     assert response.status_code == HTTP_OK
-    assert response.json() == {"status": "ok"}
+    data = response.json()
+    assert data["status"] == "ok"
+    assert "service" in data
 
 
 @pytest.mark.m2

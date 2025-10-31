@@ -45,9 +45,3 @@ app.include_router(health.router, prefix="/v1/health", tags=["health"])
 async def root() -> dict[str, str]:
     """Root endpoint."""
     return {"message": "FBA Profit Predictor API", "version": "1.0.0"}
-
-
-@app.get("/v1/health")
-async def health_check() -> dict[str, str]:
-    """Basic health check endpoint."""
-    return {"status": "ok"}
