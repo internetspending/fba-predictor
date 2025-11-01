@@ -1,0 +1,11 @@
+{
+  "Electronics": {
+    "rate": 0.15
+  },
+  "Home & Kitchen": {
+    "rate": 0.12
+  },
+  "default": {
+    "rate": 0.15
+  }
+}
