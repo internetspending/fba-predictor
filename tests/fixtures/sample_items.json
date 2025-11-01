@@ -1,0 +1,63 @@
+[
+  {
+    "asin": "B08N5WRWNW",
+    "title": "Test Product 1",
+    "brand": "TestBrand",
+    "category": "Electronics",
+    "sell_price": 29.99,
+    "buy_cost": 15.00,
+    "bsr": 5000,
+    "seller_count": 10,
+    "hazmat": false
+  },
+  {
+    "asin": "B001234567",
+    "title": "Oversize Product",
+    "brand": "OtherBrand",
+    "category": "Home & Kitchen",
+    "sell_price": 99.99,
+    "buy_cost": 50.00,
+    "dimensions": {
+      "length_cm": 50,
+      "width_cm": 40,
+      "height_cm": 30,
+      "weight_kg": 2.5
+    },
+    "bsr": 15000,
+    "seller_count": 5,
+    "hazmat": false
+  },
+  {
+    "asin": "B009876543",
+    "title": "Hazmat Product",
+    "brand": "BrandX",
+    "category": "Electronics",
+    "sell_price": 19.99,
+    "buy_cost": 10.00,
+    "bsr": 3000,
+    "seller_count": 8,
+    "hazmat": true
+  },
+  {
+    "asin": "B000000000",
+    "title": "Low ROI Product",
+    "brand": "BrandY",
+    "category": "Electronics",
+    "sell_price": 10.00,
+    "buy_cost": 9.00,
+    "bsr": 8000,
+    "seller_count": 15,
+    "hazmat": false
+  },
+  {
+    "asin": "B111111111",
+    "title": "High Profit Product",
+    "brand": "BrandZ",
+    "category": "Home & Kitchen",
+    "sell_price": 49.99,
+    "buy_cost": 15.00,
+    "bsr": 2000,
+    "seller_count": 12,
+    "hazmat": false
+  }
+]
