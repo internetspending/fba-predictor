@@ -1,0 +1,5 @@
+ASIN,Product Title,Brand,Buy Cost,Notes
+B08N5WRWNW,Test Product Example,TestBrand,29.99,"Great product, low competition"
+B001234567,,GenericBrand,15.50,Missing title
+B009876543,Another Product,,"$45.00",Malformed price
+B000000000,Product with BOM Issue,TestBrand,,Empty cost

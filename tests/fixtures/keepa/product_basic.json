@@ -1,0 +1,25 @@
+{
+  "products": [
+    {
+      "asin": "B08N5WRWNW",
+      "title": "Test Product Example",
+      "brand": "TestBrand",
+      "categoryName": "Electronics",
+      "csv": [
+        null,
+        [150000, 149999, 149998],
+        null
+      ],
+      "salesRanks": {
+        "Electronics": [1000, 1500, 2000]
+      },
+      "packageDimensions": {
+        "length": 10.5,
+        "width": 8.0,
+        "height": 2.5,
+        "weight": 1.2
+      },
+      "packageWeight": 1.2
+    }
+  ]
+}

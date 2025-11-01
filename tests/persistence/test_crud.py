@@ -24,14 +24,12 @@ from apps.api.app.persistence.crud import (
 
 
 @pytest.mark.m2
-async def test_create_user(db_session_factory) -> None:
+async def test_create_user(db_session: AsyncSession) -> None:
     """Test creating a user."""
-    async for session in db_session_factory():
-        user = await create_user(session, "test@example.com")
-        assert user.id is not None
-        assert user.email == "test@example.com"
-        assert user.is_active is True
-        break
+    user = await create_user(db_session, "test@example.com")
+    assert user.id is not None
+    assert user.email == "test@example.com"
+    assert user.is_active is True
 
 
 @pytest.mark.m2

@@ -85,3 +85,15 @@ class SavedProduct(Base):
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="saved_products")
     product: Mapped["Product"] = relationship("Product", back_populates="saved_products")
+
+
+class KeepaSnapshot(Base):
+    """Raw Keepa API snapshot storage."""
+
+    __tablename__ = "keepa_snapshots"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    asin: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    source: Mapped[str] = mapped_column(String(20), nullable=False, default="keepa")
+    payload: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(default=func.now(), index=True)

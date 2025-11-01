@@ -1,0 +1,22 @@
+[
+  {
+    "asin": "B08N5WRWNW",
+    "product_title": "Test Product Example",
+    "brand": "TestBrand",
+    "buy_cost": 29.99,
+    "notes": "Great product, low competition"
+  },
+  {
+    "asin": "B001234567",
+    "product_title": null,
+    "brand": "GenericBrand",
+    "buy_cost": 15.50,
+    "notes": "Missing title"
+  },
+  {
+    "asin": "B009876543",
+    "name": "Another Product",
+    "buy_price": 45.0,
+    "notes": null
+  }
+]

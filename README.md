@@ -120,6 +120,32 @@ fba-predictor/
 └── requirements.txt         # Python dependencies
 ```
 
+## Milestone 3 (Integrations) — Local dev
+
+### Quick Start for M3
+
+- Mock Keepa in tests; no real network calls in CI
+- Optional: run Redis locally (`docker compose -f deploy/docker/compose.yml up redis`)
+- Run tests: `pytest -m "m2 or m3" -q`
+
+### M3 Features
+
+- **Keepa Integration**: Client with retry/backoff, caching, and normalization
+- **SellerAmp Parsers**: CSV and JSON storefront export parsing
+- **Snapshot Storage**: Raw Keepa payloads persisted to database
+
+### Testing M3
+
+All M3 tests are marked with `@pytest.mark.m3` and mock external services:
+
+```bash
+# Run only M3 tests
+pytest -m m3
+
+# Run M2 + M3 tests
+pytest -m "m2 or m3"
+```
+
 ## Contributing
 
 1. Fork the repository

@@ -17,8 +17,7 @@ redis==7.0.0
 # HTTP client
 httpx==0.28.1
 
-# Retry logic
-tenacity==9.1.2
+# Retry logic (removed - using manual retry in KeepaClient)
 
 # Development tools
 ruff==0.14.2
@@ -29,3 +28,5 @@ pre-commit==4.3.0
 types-redis
 pytest-asyncio==0.21.1
 aiosqlite==0.20.0
+pytest-mock==3.15.1
+fakeredis==2.32.0
