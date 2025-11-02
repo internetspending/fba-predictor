@@ -1,0 +1,57 @@
+[
+  {
+    "asin": "B08N5WRWNW",
+    "seller_id": "seller1",
+    "price": 29.99,
+    "brand": "TestBrand",
+    "title": "Product 1"
+  },
+  {
+    "asin": "B001234567",
+    "seller_id": "seller1",
+    "price": 15.50,
+    "brand": "GenericBrand",
+    "title": "Product 2"
+  },
+  {
+    "asin": "B009876543",
+    "seller_id": "seller2",
+    "price": 45.00,
+    "brand": "BrandX",
+    "title": "Product 3"
+  },
+  {
+    "asin": "B000000000",
+    "seller_id": "seller1",
+    "price": 5.00,
+    "brand": "BrandY",
+    "title": "Low Price Product"
+  },
+  {
+    "asin": "B111111111",
+    "seller_id": "seller2",
+    "price": 99.99,
+    "brand": "BrandZ",
+    "title": "High Price Product"
+  },
+  {
+    "asin": "B222222222",
+    "seller_id": "seller1",
+    "price": 12.00,
+    "title": "Product Without Brand"
+  },
+  {
+    "asin": "B333333333",
+    "seller_id": "seller2",
+    "price": 8.50,
+    "brand": "AnotherBrand",
+    "title": "Low Price Item"
+  },
+  {
+    "asin": "B444444444",
+    "seller_id": "seller1",
+    "price": 75.00,
+    "brand": "PremiumBrand",
+    "title": "Premium Product"
+  }
+]
