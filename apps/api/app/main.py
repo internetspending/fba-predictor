@@ -40,6 +40,12 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router, prefix="/v1/health", tags=["health"])
 
+# Include scan router (dev endpoints only in non-production)
+if settings.app_env != "production":
+    from apps.api.app.api.v1 import scan
+
+    app.include_router(scan.router, prefix="/v1", tags=["scan"])
+
 
 @app.get("/")
 async def root() -> dict[str, str]:
