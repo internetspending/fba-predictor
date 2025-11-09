@@ -236,6 +236,10 @@ pytest -m "m2 or m3 or m4"
 - **Partial Success**: The pipeline continues processing even if individual items fail. Failed items are counted in `errors`, but successful items are still saved. Partial results are persisted.
 - **Retry Logic**: Only transient errors (network timeouts, connection errors, I/O errors) are retried with exponential backoff. Non-transient errors (validation, data errors) fail immediately without retry.
 
+### Notes
+
+- Deprecated fields and migration guidance: see [`docs/KNOWN_DEPRECATIONS.md`](docs/KNOWN_DEPRECATIONS.md)
+
 ### Testing M5
 
 All M5 tests are marked with `@pytest.mark.m5`:
