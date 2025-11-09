@@ -34,7 +34,7 @@ async def db_engine() -> AsyncEngine:
     await engine.dispose()
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 async def db_session(db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, None]:
     """Create async database session for testing."""
     async_session = sessionmaker(db_engine, class_=AsyncSession, expire_on_commit=False)
@@ -43,6 +43,7 @@ async def db_session(db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
         async with session.begin():
             yield session
             await session.rollback()
+        await session.close()
 
 
 @pytest.fixture

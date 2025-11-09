@@ -1,8 +1,10 @@
 """Database table definitions using SQLAlchemy ORM."""
 
 from datetime import datetime
+from uuid import UUID, uuid4
 
 from sqlalchemy import JSON, ForeignKey, String, Text, func
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -97,3 +99,18 @@ class KeepaSnapshot(Base):
     source: Mapped[str] = mapped_column(String(20), nullable=False, default="keepa")
     payload: Mapped[dict] = mapped_column(JSON, nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=func.now(), index=True)
+
+
+class Scan(Base):
+    """Scan model for tracking batch scan jobs."""
+
+    __tablename__ = "scans"
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4, index=True
+    )
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending", index=True)
+    created_at: Mapped[datetime] = mapped_column(default=func.now(), index=True)
+    started_at: Mapped[datetime | None] = mapped_column(default=None)
+    finished_at: Mapped[datetime | None] = mapped_column(default=None)
+    error: Mapped[str | None] = mapped_column(Text, default=None)
