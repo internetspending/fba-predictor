@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import os
+from collections.abc import Awaitable
 from dataclasses import asdict
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
@@ -165,7 +166,7 @@ async def process_item(
         Exception: On non-transient errors or after max retries
     """
     attempt = 0
-    last_error: Exception | None = None
+    last_error: BaseException | None = None
 
     # Transient exceptions that should be retried
     TRANSIENT_EXCEPTIONS = (
@@ -224,7 +225,9 @@ async def process_item(
             raise
 
     # Should never reach here
-    raise last_error or Exception("Unexpected error in process_item")
+    if last_error is not None:
+        raise last_error
+    raise Exception("Unexpected error in process_item")
 
 
 async def run_scan(scan_id: UUID, ruleset: RuleSet | None = None) -> ETLCounts:
@@ -263,7 +266,7 @@ async def run_scan(scan_id: UUID, ruleset: RuleSet | None = None) -> ETLCounts:
 
             # Transform: Normalize and process items
             processed_items: list[dict[str, Any]] = []
-            tasks = []
+            tasks: list[Awaitable[dict[str, Any] | None]] = []
 
             async def process_with_limit(row: dict[str, Any]) -> dict[str, Any] | None:
                 """Process item with semaphore-based rate limiting."""
@@ -283,6 +286,7 @@ async def run_scan(scan_id: UUID, ruleset: RuleSet | None = None) -> ETLCounts:
             # Process in parallel (with concurrency limit via semaphore)
             # Handle cancellation gracefully
             try:
+                results: list[dict[str, Any] | None | BaseException]
                 results = await asyncio.gather(*tasks, return_exceptions=True)
             except asyncio.CancelledError:
                 # Set status to failed with cancellation note
@@ -297,13 +301,15 @@ async def run_scan(scan_id: UUID, ruleset: RuleSet | None = None) -> ETLCounts:
                 raise
 
             for result in results:
-                if isinstance(result, Exception):
+                if isinstance(result, BaseException):
                     counts.errors += 1
                 elif result is None:
                     counts.errors += 1
-                else:
+                elif isinstance(result, dict):
                     counts.transformed += 1
                     processed_items.append(result)
+                else:
+                    counts.errors += 1
 
             # Load: Save results
             passed_items = [
