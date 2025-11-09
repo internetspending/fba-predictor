@@ -3,15 +3,16 @@
 import asyncio
 import logging
 import os
+from dataclasses import asdict
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel
 
 from apps.api.app.fees.calc import compute_breakdown
-from apps.api.app.fees.interfaces import Dimensions, FeeInputs
+from apps.api.app.fees.interfaces import Dimensions, FeeBreakdown, FeeInputs
 from apps.api.app.persistence.db import get_session_local
 from apps.api.app.persistence.scan_repo import (
     get_scan,
@@ -85,8 +86,60 @@ def _parse_decimal(value: Any) -> Decimal | None:
             cleaned = value.replace("$", "").replace(",", "").strip()
             return Decimal(cleaned) if cleaned else None
         return Decimal(str(value))
-    except (ValueError, TypeError):
+    except (InvalidOperation, ValueError, TypeError):
         return None
+
+
+def warn_deprecated_weight() -> None:
+    """Emit structured warning when legacy dimensions.weight is consumed."""
+    logger.warning(
+        '{"event":"deprecated_weight_field","action":"use_weight_kg",'
+        '"source":"Dimensions","level":"warning"}'
+    )
+
+
+def build_dimensions(raw: Any) -> Dimensions | None:
+    """
+    Construct a Dimensions object from raw payload, handling legacy fields.
+
+    Args:
+        raw: Raw dimensions mapping from SellerAmp payload.
+
+    Returns:
+        Dimensions instance or None if insufficient data.
+    """
+    if not isinstance(raw, dict):
+        return None
+
+    length = _parse_decimal(raw.get("length_cm")) or Decimal("0")
+    width = _parse_decimal(raw.get("width_cm")) or Decimal("0")
+    height = _parse_decimal(raw.get("height_cm")) or Decimal("0")
+
+    weight_kg = _parse_decimal(raw.get("weight_kg"))
+    if weight_kg is None:
+        legacy_weight = raw.get("weight")
+        legacy_value = _parse_decimal(legacy_weight) if legacy_weight is not None else None
+        if legacy_value is not None:
+            warn_deprecated_weight()
+            weight_kg = legacy_value
+
+    return Dimensions(
+        length_cm=length,
+        width_cm=width,
+        height_cm=height,
+        weight_kg=weight_kg,
+    )
+
+
+def serialize_fee_breakdown(breakdown: FeeBreakdown) -> dict[str, float]:
+    """Serialize FeeBreakdown dataclass to JSON-safe primitives."""
+    serialized: dict[str, float] = {}
+    for key, value in asdict(breakdown).items():
+        if isinstance(value, Decimal):
+            serialized[key] = float(value)
+        else:
+            serialized[key] = value
+    return serialized
 
 
 async def process_item(
@@ -127,29 +180,7 @@ async def process_item(
             # Compute fees if we have required fields
             if item.get("sell_price") and item.get("buy_cost"):
                 # Build Dimensions if we have dimension/weight data
-                dimensions_obj = None
-                if item.get("dimensions"):
-                    dims = item["dimensions"]
-                    if isinstance(dims, dict):
-                        # Accept either 'weight_kg' (preferred) or legacy 'weight'
-                        weight_val = dims.get("weight_kg")
-                        if weight_val is None:
-                            weight_val = dims.get("weight")  # legacy alias (assumed kg)
-                            # Log deprecation warning for legacy usage
-                            if weight_val is not None:
-                                logger.warning(
-                                    "Using legacy 'dimensions.weight'; prefer 'weight_kg'"
-                                )
-                            # If your legacy 'weight' is in POUNDS, convert instead:
-                            # if weight_val is not None:
-                            #     weight_val = str(Decimal(weight_val) * Decimal("0.45359237"))
-
-                        dimensions_obj = Dimensions(
-                            length_cm=_parse_decimal(dims.get("length_cm")) or Decimal("0"),
-                            width_cm=_parse_decimal(dims.get("width_cm")) or Decimal("0"),
-                            height_cm=_parse_decimal(dims.get("height_cm")) or Decimal("0"),
-                            weight_kg=_parse_decimal(weight_val),
-                        )
+                dimensions_obj = build_dimensions(item.get("dimensions"))
 
                 fee_inputs = FeeInputs(
                     category=item.get("category") or "Unknown",
@@ -159,9 +190,7 @@ async def process_item(
                 )
                 breakdown = compute_breakdown(fee_inputs)
                 # Convert dataclass to dict
-                from dataclasses import asdict
-
-                item["fee_breakdown"] = asdict(breakdown)
+                item["fee_breakdown"] = serialize_fee_breakdown(breakdown)
                 item["net_profit"] = float(breakdown.net_profit)
                 item["roi"] = float(breakdown.roi)
             else:
